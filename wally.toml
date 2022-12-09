@@ -4,6 +4,7 @@ version = "1.0.0"
 registry = "https://github.com/UpliftGames/wally-index"
 autors = ["@baum1000000 (baum, Command17)"]
 description = "A simple easy-to-use networking library"
+license = "MIT"
 realm = "shared"
 
 [dependencies]
