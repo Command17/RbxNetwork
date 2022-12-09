@@ -8,7 +8,7 @@
         "$ignoreUnknownInstances": true,
         "Packages": {
           "$path": "Packages",
-          "RBXNetwork": {
+          "RbxNetwork": {
             "$path": "default.project.json"
           }
         }
