@@ -1,4 +1,4 @@
-![rbx_network_logo|228x120](upload://bNpUyZz5PMXZnwcWMlF1SMtfxQh.png)
+![rbx_network_logo](https://user-images.githubusercontent.com/84639718/206788387-6213bb92-729c-4aad-bc33-5b152bbb77ac.png)
 
 # <kbd>RbxNetwork</kbd>
 
