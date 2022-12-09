@@ -1,0 +1,10 @@
+[package]
+name = "command17/rbxnetwork"
+version = "1.0.0"
+registry = "https://github.com/UpliftGames/wally-index"
+autors = ["@baum1000000 (baum, Command17)"]
+description = "A simple easy-to-use networking library"
+realm = "shared"
+
+[dependencies]
+Signal = "command17/rbxsignal@1.0.1"

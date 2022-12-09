@@ -1,0 +1,10 @@
+Packages/
+src/Packages/
+src/wally.lock
+
+# Project place file
+/RbxNetwork.rbxlx
+
+# Roblox Studio lock files
+/*.rbxlx.lock
+/*.rbxl.lock

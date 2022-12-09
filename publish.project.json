@@ -1,0 +1,17 @@
+{
+    "name": "Publish",
+    "tree": {
+      "$className": "DataModel",
+      "$ignoreUnknownInstances": true,
+      "ReplicatedStorage": {
+        "$className": "ReplicatedStorage",
+        "$ignoreUnknownInstances": true,
+        "Packages": {
+          "$path": "Packages",
+          "RBXNetwork": {
+            "$path": "default.project.json"
+          }
+        }
+      }
+    }
+  }
