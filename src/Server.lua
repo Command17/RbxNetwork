@@ -1,5 +1,5 @@
 --[[
-RBXNetworkServer by baum (@baum1000000)
+RbxNetworkServer by baum (@baum1000000)
 
 A simple easy-to-use networking library
 ]]--
@@ -20,6 +20,7 @@ function reSignal.new(RE: RemoteEvent)
 
     self._re.OnServerEvent:Connect(function(Player: Player, payload)
         payload = payload or {}
+        payload = Util:UnpackTable(payload)
 
         self._signal:Fire(Player, table.unpack(payload))
     end)
@@ -36,18 +37,18 @@ function reSignal:ConnectParallel(callback: Signal.callback) -- Connects a funct
 end
 
 function reSignal:Fire(...: any) -- Fires the RemoteEvent
-    self._re:FireAllClients({...})
+    self._re:FireAllClients(Util:PackTable(table.pack(...)))
 end
 
 function reSignal:FireFor(Player: Player, ...: any) -- Fires the RemoteEvent for one player
-    self._re:FireClient(Player, {...})
+    self._re:FireClient(Player, Util:PackTable(table.pack(...)))
 end
 
 function reSignal:FireExept(Player: Player, ...: any) -- Fires the RemoteEvent for all players exept one
     local players = Util:GetAllPlayersExecpt(Player)
 
     for _, player in ipairs(players) do
-        self:FireFor(player)
+        self:FireFor(player, ...)
     end
 end
 
@@ -78,6 +79,7 @@ function rfSignal.new(RF: RemoteFunction)
 
     self._rf.OnServerInvoke = function(Player: Player, payload)
         payload = payload or {}
+        payload = Util:UnpackTable(payload)
 
         if self._callback then
             return self._callback(Player, table.unpack(payload))
@@ -96,7 +98,7 @@ function rfSignal:set(callback: Signal.callback | nil) -- Sets the current callb
 end
 
 function rfSignal:Fire(Player: Player, ...: any) -- Fires the RemoteFunction
-    return self._rf:InvokeClient(Player, {...})
+    return self._rf:InvokeClient(Player, Util:PackTable(table.pack(...)))
 end
 
 function rfSignal:DisconnectAll() -- Sets the callback to nil
@@ -105,7 +107,7 @@ end
 
 rfSignal.Destroy = rfSignal.DisconnectAll -- RFSignal:Destroy() -> RFSignal:DisconnectAll()
 
--- Client Class --
+-- Server Class --
 
 local server = {}
 server.__index = server

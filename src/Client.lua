@@ -1,5 +1,5 @@
 --[[
-RBXNetworkClient by baum (@baum1000000)
+RbxNetworkClient by baum (@baum1000000)
 
 A simple easy-to-use networking library
 ]]--
@@ -20,6 +20,7 @@ function reSignal.new(RE: RemoteEvent)
 
     self._re.OnClientEvent:Connect(function(payload)
         payload = payload or {}
+        payload = Util:UnpackTable(payload)
 
         self._signal:Fire(table.unpack(payload))
     end)
@@ -36,7 +37,7 @@ function reSignal:ConnectParallel(callback: Signal.callback) -- Connects a funct
 end
 
 function reSignal:Fire(...: any) -- Fires the RemoteEvent
-    self._re:FireServer({...})
+    self._re:FireServer(Util:PackTable(table.pack(...)))
 end
 
 function reSignal:Once(callback: Signal.callback) -- Disconnects after one fire
@@ -66,6 +67,7 @@ function rfSignal.new(RF: RemoteFunction)
 
     self._rf.OnClientInvoke = function(payload)
         payload = payload or {}
+        payload = Util:UnpackTable(payload)
 
         if self._callback then
             return self._callback(table.unpack(payload))
@@ -84,7 +86,7 @@ function rfSignal:set(callback: Signal.callback | nil) -- Sets the current callb
 end
 
 function rfSignal:Fire(...: any) -- Fires the RemoteFunction
-    return self._rf:InvokeServer({...})
+    return self._rf:InvokeServer(Util:PackTable(table.pack(...)))
 end
 
 function rfSignal:DisconnectAll() -- Sets the callback to nil
