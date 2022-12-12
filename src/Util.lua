@@ -64,6 +64,12 @@ function util:PackValue(value: any) -- packs a value
         end
 
         return "2/" .. result
+    elseif typeof(value) == "number" then
+        local v = self:PackValue(tostring(value))
+
+        local n = string.sub(v, 3, string.len(v))
+
+        return "3/" .. n
     else
         return value
     end
@@ -81,15 +87,18 @@ function util:UnpackValue(value: any) -- unpacks a value
             local result = ""
 
             for _, byte in pairs(string.split(v, ".")) do
-                print(byte)
-
                 local char = string.char(tonumber(byte))
-
                 
                 result ..= char
             end
 
             return result
+        elseif string.sub(value, 1, 2) == "3/" then
+            local n = string.sub(value, 3, string.len(value))
+
+            local v = self:UnpackValue("2/" .. n)
+
+            return tonumber(v)
         else
             return value
         end
