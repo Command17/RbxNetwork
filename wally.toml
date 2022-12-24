@@ -1,6 +1,6 @@
 [package]
 name = "command17/rbxnetwork"
-version = "1.0.2"
+version = "1.0.3"
 registry = "https://github.com/UpliftGames/wally-index"
 autors = ["@baum1000000 (baum, Command17)"]
 description = "A simple easy-to-use networking library"
@@ -8,4 +8,4 @@ license = "MIT"
 realm = "shared"
 
 [dependencies]
-Signal = "command17/rbxsignal@1.0.1"
+Signal = "command17/rbxsignal@1.0.2"

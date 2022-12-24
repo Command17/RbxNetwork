@@ -2,6 +2,9 @@ Packages/
 src/Packages/
 src/wally.lock
 
+build
+build/
+
 # Project place file
 /RbxNetwork.rbxlx
 

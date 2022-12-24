@@ -1,22 +1,30 @@
---[[
-RbxNetworkServer by baum (@baum1000000)
-
-A simple easy-to-use networking library
-]]--
-
 local Signal = require(script.Parent.Parent.Signal)
 local Util = require(script.Parent.Util)
 
 -- RemoteEventSignal Class --
 
-local reSignal = {}
-reSignal.__index = reSignal
+--[=[
+    @class RESignal
 
-function reSignal.new(RE: RemoteEvent)
+    RemoteSignal Class
+]=]
+local RESignal = {}
+RESignal.__index = RESignal
+
+--[=[
+    Creates a new RESignal
+
+    not usable
+
+    @param RE RemoteEvent
+
+    @return RESignal Object
+]=]
+function RESignal.new(RE: RemoteEvent)
     local self = setmetatable({
         _re = RE,
         _signal = Signal.new()
-    }, reSignal)
+    }, RESignal)
 
     self._re.OnServerEvent:Connect(function(Player: Player, payload)
         payload = payload or {}
@@ -28,23 +36,80 @@ function reSignal.new(RE: RemoteEvent)
     return self
 end
 
-function reSignal:Connect(callback: Signal.callback) -- Connects a function
+--[=[
+    Connects to the RESignal
+
+    @param callback (...any) -> any
+
+    @return RbxSignal Connection
+
+    ```lua
+    local Connection = RESignal:Connect(function(...: any)
+        print("Got args from server!")
+        print(...)
+    end)
+    ```
+]=]
+function RESignal:Connect(callback: Signal.callback)
     return self._signal:Connect(callback)
 end
 
-function reSignal:ConnectParallel(callback: Signal.callback) -- Connects a function in Parallel
+--[=[
+    Connects to the RESignal in parallel
+
+    @param callback (...any) -> any
+
+    @return RbxSignal Connection
+
+    ```lua
+    local Connection = RESignal:ConnectParallel(function(...: any)
+        print("Got args from server!")
+        print(...)
+    end)
+    ```
+]=]
+function RESignal:ConnectParallel(callback: Signal.callback)
     return self._signal:ConnectParallel(callback)
 end
 
-function reSignal:Fire(...: any) -- Fires the RemoteEvent
+--[=[
+    Fire the RESignal
+
+    @param ... any
+
+    ```lua
+    RESignal:Fire("Hello World!", 2022, {Date = "24/12/2022", Type = "DD/MM/YYYY"})
+    ```
+]=]
+function RESignal:Fire(...: any)
     self._re:FireAllClients(Util:PackTable(table.pack(...)))
 end
 
-function reSignal:FireFor(Player: Player, ...: any) -- Fires the RemoteEvent for one player
+--[=[
+    Fire the RESignal only for one player
+
+    @param Player Player
+    @param ... any
+
+    ```lua
+    RESignal:FireFor(plr, "Hello World!", 2022, {Date = "24/12/2022", Type = "DD/MM/YYYY"})
+    ```
+]=]
+function RESignal:FireFor(Player: Player, ...: any)
     self._re:FireClient(Player, Util:PackTable(table.pack(...)))
 end
 
-function reSignal:FireExept(Player: Player, ...: any) -- Fires the RemoteEvent for all players exept one
+--[=[
+    Fire the RESignal for all players exept one
+
+    @param Player Player
+    @param ... any
+
+    ```lua
+    RESignal:FireExept(baum1000000, "Hello World!", 2022, {Date = "24/12/2022", Type = "DD/MM/YYYY"})
+    ```
+]=]
+function RESignal:FireExept(Player: Player, ...: any)
     local players = Util:GetAllPlayersExecpt(Player)
 
     for _, player in ipairs(players) do
@@ -52,30 +117,80 @@ function reSignal:FireExept(Player: Player, ...: any) -- Fires the RemoteEvent f
     end
 end
 
-function reSignal:Once(callback: Signal.callback) -- Disconnects after one fire
+--[=[
+    Connects to the RESignal once
+
+    @param callback (...any) -> any
+
+    @return RbxSignal Connection
+
+    ```lua
+    RESignal:Once(function(...: any)
+        print("Got args from server!")
+        print(...)
+    end)
+    ```
+]=]
+function RESignal:Once(callback: Signal.callback)
     return self._signal:Once(callback)
 end
 
-function reSignal:DisconnectAll() -- Disconnects all Listeners
+--[=[
+    Disconnects all listeners
+
+    ```lua
+    RESignal:DisconnectAll()
+    ```
+]=]
+function RESignal:DisconnectAll()
     self._signal:DisconnectAll()
 end
 
-function reSignal:Wait() -- Waits until fired
+--[=[
+    Waits until the RESignal is fired on the server
+
+    @return any
+]=]
+function RESignal:Wait()
     return self._signal:Wait()
 end
 
-reSignal.Destroy = reSignal.DisconnectAll -- RESignal:Destroy() -> RESignal:DisconnectAll()
+--[=[
+    @within RESignal
+    @function Destroy
+
+    Disconnects all listeners
+
+    ```lua
+    RESignal:Destroy()
+    ```
+]=]
+RESignal.Destroy = RESignal.DisconnectAll
 
 -- RemoteFunctionSignal Class --
 
-local rfSignal = {}
-rfSignal.__index = rfSignal
+--[=[
+    @class RFSignal
 
-function rfSignal.new(RF: RemoteFunction)
+    RemoteFunction Signal Class
+]=]
+local RFSignal = {}
+RFSignal.__index = RFSignal
+
+--[=[
+    Creates a new RFSignal
+
+    not usable
+
+    @param RF RemoteFunction
+
+    @return RFSignal Object
+]=]
+function RFSignal.new(RF: RemoteFunction)
     local self = setmetatable({
         _rf = RF,
         _callback = nil,
-    }, rfSignal)
+    }, RFSignal)
 
     self._rf.OnServerInvoke = function(Player: Player, payload)
         payload = payload or {}
@@ -91,58 +206,137 @@ function rfSignal.new(RF: RemoteFunction)
     return self
 end
 
-function rfSignal:set(callback: Signal.callback | nil) -- Sets the current callback to a function or nil
+--[=[
+    Sets the current callback to a function or nil
+    
+    @param callback (...any) -> ...any | nil
+
+    ```lua
+    RFSignal:set(function(...:any)
+        print("Yay args!")
+
+        return "Yes"
+    end)
+
+    -- Disconnecting
+
+    RFSignal:set(nil)
+    ```
+]=]
+function RFSignal:set(callback: Signal.callback | nil) -- Sets the current callback to a function or nil
     assert(typeof(callback) == "function" or callback == nil, string.format("Invalid argument #1 (function or nil expected got %s)", typeof(callback)))
     
     self._callback = callback
 end
 
-function rfSignal:Fire(Player: Player, ...: any) -- Fires the RemoteFunction
+--[=[
+    Fires the RFSignal
+
+    @yields
+
+    @param Player Player
+    @param ... any
+
+    @return any
+
+    ```lua
+    local isTrue = RFSignal:Fire("Is roblox cool?")
+    ```
+]=]
+function RFSignal:Fire(Player: Player, ...: any) -- Fires the RemoteFunction
     return self._rf:InvokeClient(Player, Util:PackTable(table.pack(...)))
 end
 
-function rfSignal:DisconnectAll() -- Sets the callback to nil
+--[=[
+    Sets the callback to nil
+
+    ```lua
+    RFSignal:DisconnectAll()
+    ```
+]=]
+function RFSignal:DisconnectAll() -- Sets the callback to nil
     self:set(nil)
 end
 
-rfSignal.Destroy = rfSignal.DisconnectAll -- RFSignal:Destroy() -> RFSignal:DisconnectAll()
+--[=[
+    @within RESignal
+    @function Destroy
+
+    Sets the callback to nil
+
+    ```lua
+    RFSignal:Destroy()
+    ```
+]=]
+RFSignal.Destroy = RFSignal.DisconnectAll -- RFSignal:Destroy() -> RFSignal:DisconnectAll()
 
 -- Server Class --
 
-local server = {}
-server.__index = server
+--[=[
+    @class Server
+    @server
 
-function server.getNetwork(Parent: Instance, Namespace: string) -- returns ClientNetwork
+    RbxNetworkServer by baum (@baum1000000)
+]=]
+local Server = {}
+Server.__index = Server
+
+--[=[
+    Gets or creates a network
+
+    @param Parent Instance
+    @param Namespace string
+
+    @return Network Object
+]=]
+function Server.getNetwork(Parent: Instance, Namespace: string) -- returns ClientNetwork
     local self = setmetatable({
         _namespace = Namespace,
         _space = {Main = nil, RE = nil, RF = nil},
-    }, server)
+    }, Server)
 
     self._space.Main, self._space.RE, self._space.RF = Util:GetSpaceWithName(Parent, Namespace)
 
     return self
 end
 
-function server:GetRE(Name: string) -- returns RemoteEventSignal
+--[=[
+    Gets or creates a RemoteSignal
+
+    @param Name string
+
+    @return RESignal Object
+]=]
+function Server:GetRE(Name: string) -- returns RemoteEventSignal
     local RE = self._space.RE:FindFirstChild(Name) or Instance.new("RemoteEvent", self._space.RE)
 
     assert(RE:IsA("RemoteEvent"), string.format("%s is not a RemoteEvent!", Name))
 
     RE.Name = Name
 
-    return reSignal.new(RE)
+    return RESignal.new(RE)
 end
 
-function server:GetRF(Name: string) -- returns RemoteFunctionSignal
+--[=[
+    Gets or creates a RemoteFunction
+
+    @param Name string
+
+    @return RFSignal Object
+]=]
+function Server:GetRF(Name: string) -- returns RemoteFunctionSignal
     local RF = self._space.RF:FindFirstChild(Name) or Instance.new("RemoteFunction", self._space.RF)
 
     assert(RF:IsA("RemoteFunction"), string.format("%s is not a RemoteFunction!", Name))
 
     RF.Name = Name
 
-    return rfSignal.new(RF)
+    return RFSignal.new(RF)
 end
 
-function server:Destroy() end -- Destroy
+--[=[
+    Destroy function for any maid
+]=]
+function Server:Destroy() end -- Destroy
 
-return server
+return Server
