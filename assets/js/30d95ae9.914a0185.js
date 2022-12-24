@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[340],{52835:e=>{e.exports=JSON.parse('{"functions":[],"properties":[],"types":[],"name":"RbxNetwork","desc":"Client = Client\\n\\nServer = Server","source":{"line":8,"path":"src/init.lua"}}')}}]);
